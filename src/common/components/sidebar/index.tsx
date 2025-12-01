@@ -1,4 +1,4 @@
-import { LayoutDashboard, FileEdit } from 'lucide-react';
+import { LayoutDashboard, FileEdit, CreditCard, ListChecks, FileText } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { cn } from 'Common/lib/utils';
@@ -26,6 +26,27 @@ const menuItems: MenuItem[] = [
     path: 'client/registration',
     active: true,
   },
+  {
+    id: 'transactions',
+    label: 'Транзакции',
+    icon: <CreditCard className="w-5 h-5" />,
+    path: 'transactions',
+    active: true,
+  },
+  {
+    id: 'limits',
+    label: 'Лимиты',
+    icon: <ListChecks className="w-5 h-5" />,
+    path: 'limits',
+    active: true,
+  },
+  {
+    id: 'reports',
+    label: 'Отчеты',
+    icon: <FileText className="w-5 h-5" />,
+    path: 'reports',
+    active: true,
+  },
 ];
 
 export function Sidebar() {
@@ -33,7 +54,7 @@ export function Sidebar() {
   const normalizedPathname = location.pathname.replace(/^\//, '');
 
   return (
-    <div className="w-[270px] min-h-screen bg-[#fff] flex flex-col pt-5 pb-5">
+    <div className="w-[270px] bg-[#fff] flex flex-col pt-5 pb-5 h-full">
       <nav className="flex flex-col gap-2">
         {menuItems
           .filter((item) => item.active)
