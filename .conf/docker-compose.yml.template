@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  app:
+    image: "${DOCKER_IMAGE}" 
+    container_name: admin-panel-front
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: "${SPRING_PROFILES_ACTIVE}"
+      APP_PROFILE: "${APP_PROFILE}"
+    env_file:
+          - ./.env
+    network_mode: "host"
+    entrypoint: ["nginx", "-g", "daemon off;"]
