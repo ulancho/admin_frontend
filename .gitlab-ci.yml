@@ -7,7 +7,7 @@ build:
   extends: .builder-kaniko-maven
   only:
     - dev
-    - main
+    - master
   variables:
     DOCKER_FILE: .conf/Dockerfile
 
@@ -21,7 +21,7 @@ deploy-prod:
   variables:
     SSH_HOST: 172.23.255.22
   only:
-    - main
+    - master
 
 
   
