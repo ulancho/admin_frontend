@@ -19,7 +19,7 @@ deploy-test:
 deploy-prod:
   extends: .deploy-prod
   variables:
-    SSH_HOST: 172.23.255.22
+    SSH_HOST: 172.23.255.122
   only:
     - master
 
