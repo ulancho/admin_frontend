@@ -28,7 +28,7 @@ export interface CreateLimitPayload {
   type: LimitIdentificationType;
 }
 
-const DEFAULT_API_BASE_URL = 'https://mobile-test.fkb.kg/admin-panel/api/v1';
+const DEFAULT_API_BASE_URL = 'https://mobile.fkb.kg/admin-panel/api/v1';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? DEFAULT_API_BASE_URL;
 
 export async function fetchLimits(): Promise<TransactionLimit[]> {

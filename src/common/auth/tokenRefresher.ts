@@ -5,7 +5,7 @@ import { getRefreshToken, saveLoginResponseTokens } from './tokenStorage.ts';
 import type { LoginResponse } from 'Modules/login/api/loginApi.ts';
 
 const refreshClient = axios.create({
-  baseURL: 'https://mobile-test.fkb.kg/keycloak/realms/admin-panel/protocol/openid-connect',
+  baseURL: 'https://mobile.fkb.kg/keycloak/realms/admin-panel/protocol/openid-connect',
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded',
   },

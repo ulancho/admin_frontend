@@ -23,7 +23,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/admin-panel': {
-        target: 'https://mobile-test.fkb.kg',
+        target: 'https://mobile.fkb.kg',
         changeOrigin: true,
         secure: true,
       },
