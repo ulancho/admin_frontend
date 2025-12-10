@@ -18,12 +18,34 @@ type FormDataState = {
   birthDate: string;
 };
 
+const PHONE_PREFIX = '996';
+const MAX_PHONE_LENGTH = 12;
+
+const normalizePhoneNumber = (value: string): string => {
+  const digitsOnly = value.replace(/\D/g, '');
+  const withoutPrefix = digitsOnly.startsWith(PHONE_PREFIX)
+    ? digitsOnly.slice(PHONE_PREFIX.length)
+    : digitsOnly;
+  const normalized = `${PHONE_PREFIX}${withoutPrefix}`;
+
+  return normalized.slice(0, MAX_PHONE_LENGTH);
+};
+
+const formatPhoneNumber = (value: string): string => {
+  const normalized = normalizePhoneNumber(value);
+  const part1 = normalized.slice(0, 3);
+  const part2 = normalized.slice(3, 6);
+  const part3 = normalized.slice(6, 12);
+
+  return [part1, part2, part3].filter(Boolean).join(' ');
+};
+
 const DEFAULT_FORM_DATA: FormDataState = {
   residencyStatus: 'Резидент/Не резидент',
   firstName: '',
   inn: '',
   lastName: '',
-  phone: '',
+  phone: PHONE_PREFIX,
   patronymic: '',
   email: '',
   birthDate: '',
@@ -33,7 +55,7 @@ const mapCustomerToFormData = (customer: CustomerResponse | null): Partial<FormD
   firstName: customer?.name ?? '',
   inn: customer?.inn ?? '',
   lastName: customer?.surname ?? '',
-  phone: customer?.phoneNumber ?? '',
+  phone: normalizePhoneNumber(customer?.phoneNumber ?? ''),
   patronymic: customer?.patronymic ?? '',
   email: customer?.email ?? '',
 });
@@ -85,6 +107,13 @@ const Form = observer(() => {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      phone: normalizePhoneNumber(value),
+    }));
   };
 
   const AttachmentIcon = () => (
@@ -272,8 +301,8 @@ const Form = observer(() => {
                 <div className="relative">
                   <input
                     type="tel"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange('phone', e.target.value)}
+                    value={formatPhoneNumber(formData.phone)}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
                     className="w-full h-12 px-4 pr-12 font-montserrat text-base font-normal text-[#232323] bg-[#FCFCFC] border border-[#D7D7D7] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B50000] focus:border-transparent transition-all"
                   />
                   <div className="absolute right-4 top-1/2 -translate-y-1/2">
