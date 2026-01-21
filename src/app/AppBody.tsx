@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import Registration from 'Modules/clients/registration';
 import Form from 'Modules/clients/registration/Form.tsx';
+import Search from 'Modules/clients/search';
 import Limits from 'Modules/limits';
 import CreateLimit from 'Modules/limits/CreateLimit.tsx';
 import EditLimit from 'Modules/limits/EditLimit.tsx';
@@ -20,6 +21,7 @@ export const AppBody = () => {
       <Route path="/limits/:id/edit" element={<EditLimit />} />
       <Route path="/limits/:id" element={<ViewLimit />} />
       <Route path="/reports" element={<Reports />} />
+      <Route path="/client/search" element={<Search />} />
     </Routes>
   );
 };
