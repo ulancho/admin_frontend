@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
-import { PROXY_BASE_URL } from 'Common/config/apiConfig.ts';
+import { PROXY_BASE_URL } from './src/common/config/apiConfig.ts';
 
 const srcDir = fileURLToPath(new URL('./src', import.meta.url));
 
