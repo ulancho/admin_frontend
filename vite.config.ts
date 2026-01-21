@@ -5,6 +5,8 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
+import { PROXY_BASE_URL } from 'Common/config/apiConfig.ts';
+
 const srcDir = fileURLToPath(new URL('./src', import.meta.url));
 
 export default defineConfig({
@@ -23,7 +25,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/admin-panel': {
-        target: 'https://mobile.fkb.kg',
+        target: PROXY_BASE_URL,
         changeOrigin: true,
         secure: true,
       },
