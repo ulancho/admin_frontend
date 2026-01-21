@@ -1,11 +1,13 @@
 import axios from 'axios';
 
+import { KEYCLOAK_BASE_URL } from 'Common/config/apiConfig.ts';
+
 import { getRefreshToken, saveLoginResponseTokens } from './tokenStorage.ts';
 
 import type { LoginResponse } from 'Modules/login/api/loginApi.ts';
 
 const refreshClient = axios.create({
-  baseURL: 'https://mobile.fkb.kg/keycloak/realms/admin-panel/protocol/openid-connect',
+  baseURL: KEYCLOAK_BASE_URL,
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded',
   },

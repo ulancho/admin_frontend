@@ -68,10 +68,6 @@ export type StatusOption = {
   label: string;
 };
 
-const DEFAULT_TRANSACTIONS_API_BASE_URL = 'https://mobile.fkb.kg/admin-panel/api/v1';
-const TRANSACTIONS_API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ?? DEFAULT_TRANSACTIONS_API_BASE_URL;
-
 export async function fetchTransactions({
   page = 0,
   size = 10,
@@ -90,7 +86,6 @@ export async function fetchTransactions({
   signal,
 }: FetchTransactionsParams = {}): Promise<TransactionsResponse> {
   const { data } = await httpClient.get<TransactionsResponse>('/service/transactions', {
-    baseURL: TRANSACTIONS_API_BASE_URL,
     params: {
       page,
       size,
@@ -119,7 +114,6 @@ export async function fetchTransactions({
 export async function fetchStatuses(): Promise<StatusOption[]> {
   try {
     const { data } = await httpClient.get<StatusResponseItem[]>('/service/transactions/statuses', {
-      baseURL: TRANSACTIONS_API_BASE_URL,
       headers: { accept: '*/*' },
     });
 

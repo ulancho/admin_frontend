@@ -6,13 +6,14 @@ import {
   getAuthorizationHeaderOrRedirect,
   redirectToLogin,
 } from 'Common/auth/tokenStorage.ts';
+import { API_BASE_URL } from 'Common/config/apiConfig.ts';
 
 interface RetryableAxiosRequestConfig<D = unknown> extends InternalAxiosRequestConfig<D> {
   _retry?: boolean;
 }
 
 export const httpClient = axios.create({
-  baseURL: '',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },

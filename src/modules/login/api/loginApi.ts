@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { KEYCLOAK_BASE_URL } from 'Common/config/apiConfig.ts';
+
 export interface LoginRequestPayload {
   username: string;
   password: string;
@@ -18,7 +20,7 @@ export interface LoginResponse {
 }
 
 const loginClient = axios.create({
-  baseURL: 'https://mobile.fkb.kg/keycloak/realms/admin-panel/protocol/openid-connect',
+  baseURL: KEYCLOAK_BASE_URL,
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded',
   },

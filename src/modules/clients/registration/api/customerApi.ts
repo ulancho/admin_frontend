@@ -19,13 +19,8 @@ export interface RegisterCustomerPayload {
   phoneNumber: string;
 }
 
-const DEFAULT_CUSTOMER_API_BASE_URL = 'https://mobile.fkb.kg/admin-panel/api/v1';
-
-const CUSTOMER_API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? DEFAULT_CUSTOMER_API_BASE_URL;
-
 export async function fetchCustomerById(id: string): Promise<CustomerResponse> {
   const { data } = await httpClient.get<CustomerResponse>(`/customer/${id}`, {
-    baseURL: CUSTOMER_API_BASE_URL,
     headers: {
       accept: '*/*',
     },
@@ -36,7 +31,6 @@ export async function fetchCustomerById(id: string): Promise<CustomerResponse> {
 
 export async function registerCustomer(payload: RegisterCustomerPayload): Promise<void> {
   await httpClient.post('/customer/register', payload, {
-    baseURL: CUSTOMER_API_BASE_URL,
     headers: {
       accept: '*/*',
       'Content-Type': 'application/json',
