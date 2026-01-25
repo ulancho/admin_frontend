@@ -1,4 +1,11 @@
-import { LayoutDashboard, FileEdit, CreditCard, ListChecks, FileText } from 'lucide-react';
+import {
+  LayoutDashboard,
+  FileEdit,
+  CreditCard,
+  ListChecks,
+  FileText,
+  CircleUser,
+} from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { cn } from 'Common/lib/utils';
@@ -31,6 +38,13 @@ const menuItems: MenuItem[] = [
     label: 'Транзакции',
     icon: <CreditCard className="w-5 h-5" />,
     path: 'transactions',
+    active: true,
+  },
+  {
+    id: 'customer-search',
+    label: 'Клиенты',
+    icon: <CircleUser className="w-5 h-5" />,
+    path: 'client/search',
     active: true,
   },
   {

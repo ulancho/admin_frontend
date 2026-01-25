@@ -1,9 +1,16 @@
 import { ListFilterPlus } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import {
+  fetchCustomers,
+  type CustomerSearchItem,
+  type FetchCustomersParams,
+  type SortDirection,
+} from 'Modules/clients/search/api/customerSearchApi.ts';
 import { PAGE_SIZE_OPTIONS } from 'Modules/transactions/constants';
 
 export default function Search() {
+  const [customers, setCustomers] = useState<CustomerSearchItem[]>([]);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState<number>(PAGE_SIZE_OPTIONS[0]);
   const [totalPages, setTotalPages] = useState(0);
@@ -13,8 +20,68 @@ export default function Search() {
 
   const [filtersVisible, setFiltersVisible] = useState(false);
 
+  const sortBy: FetchCustomersParams['sortBy'] = 'id';
+  const direction: SortDirection = 'desc';
+
+  useEffect(() => {
+    let isActive = true;
+    const controller = new AbortController();
+
+    async function loadCustomers() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetchCustomers({
+          page,
+          size: pageSize,
+          sortBy,
+          direction,
+          signal: controller.signal,
+        });
+
+        if (!isActive) {
+          return;
+        }
+
+        setCustomers(response.content);
+        setTotalPages(response.totalPages);
+        setTotalElements(response.totalElements);
+      } catch (fetchError) {
+        if (!isActive) {
+          return;
+        }
+
+        if (fetchError instanceof DOMException && fetchError.name === 'AbortError') {
+          return;
+        }
+
+        setError('Не удалось загрузить список клиентов. Попробуйте обновить страницу.');
+      } finally {
+        if (isActive) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void loadCustomers();
+
+    return () => {
+      isActive = false;
+      controller.abort();
+    };
+  }, [page, pageSize, direction, sortBy]);
+
   function toggleFiltersVisibility() {
     setFiltersVisible((current) => !current);
+  }
+
+  function formatValue(value: string | number | null | undefined) {
+    if (value === null || value === undefined || value === '') {
+      return '—';
+    }
+
+    return value;
   }
 
   const canGoPrevious = page > 0;
@@ -23,7 +90,7 @@ export default function Search() {
   const showingTo = Math.min((page + 1) * pageSize, totalElements);
 
   return (
-    <div className="mx-auto h-full max-w-[100%]">
+    <div className="h-full max-w-[100%]">
       <div className="flex h-full flex-col items-start gap-8">
         <header className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold leading-none text-text-black">Клиенты</h1>
@@ -72,26 +139,14 @@ export default function Search() {
               <div className="w-[120px] flex-shrink-0 text-sm font-semibold leading-none text-text-black">
                 ID
               </div>
-              <div className="w-[170px] flex-shrink-0 px-2 text-sm font-semibold leading-none text-text-black">
-                Дата
+              <div className="w-[160px] flex-shrink-0 px-2 text-sm font-semibold leading-none text-text-black">
+                Фамилия
               </div>
               <div className="w-[160px] flex-shrink-0 px-2 text-sm font-semibold leading-none text-text-black">
-                Тип
+                Имя
               </div>
-              <div className="w-[150px] flex-shrink-0 px-2 text-sm font-semibold leading-none text-text-black">
-                Статус
-              </div>
-              <div className="w-[130px] flex-shrink-0 px-2 text-sm font-semibold leading-none text-text-black">
-                Сумма
-              </div>
-              <div className="w-[170px] flex-shrink-0 px-2 text-sm font-semibold leading-none text-text-black">
-                Счёт списания
-              </div>
-              <div className="w-[170px] flex-shrink-0 px-2 text-sm font-semibold leading-none text-text-black">
-                Счёт зачисления
-              </div>
-              <div className="flex flex-1 flex-shrink-0 px-4 text-sm font-semibold leading-none text-text-black">
-                Комментарий
+              <div className="w-[140px] flex-shrink-0 px-2 text-sm font-semibold leading-none text-text-black">
+                ИНН
               </div>
             </div>
 
@@ -107,11 +162,42 @@ export default function Search() {
               </div>
             )}
 
-            {!loading && !error && 0 === 0 && (
+            {!loading && !error && customers.length === 0 && (
               <div className="flex items-center justify-center py-10 text-sm text-text-gray">
                 Нет данных для отображения
               </div>
             )}
+
+            {!loading &&
+              !error &&
+              customers.map((customer) => (
+                <div key={customer.customerId} className="flex items-center gap-6 py-3">
+                  <div className="w-[120px] flex-shrink-0 text-sm font-normal leading-none text-text-black">
+                    {formatValue(customer.customerId)}
+                  </div>
+                  <div className="w-[160px] flex-shrink-0 px-2 text-sm font-normal leading-none text-text-black">
+                    {formatValue(customer.surname)}
+                  </div>
+                  <div className="w-[160px] flex-shrink-0 px-2 text-sm font-normal leading-none text-text-black">
+                    {formatValue(customer.name)}
+                  </div>
+                  <div className="w-[180px] flex-shrink-0 px-2 text-sm font-normal leading-none text-text-black">
+                    {formatValue(customer.patronymic)}
+                  </div>
+                  <div className="w-[140px] flex-shrink-0 px-2 text-sm font-normal leading-none text-text-black">
+                    {formatValue(customer.inn)}
+                  </div>
+                  <div className="w-[200px] flex-shrink-0 px-2 text-sm font-normal leading-none text-text-black">
+                    {formatValue(customer.email)}
+                  </div>
+                  <div className="w-[150px] flex-shrink-0 px-2 text-sm font-normal leading-none text-text-black">
+                    {formatValue(customer.phoneNumber)}
+                  </div>
+                  <div className="flex flex-1 px-4 text-sm font-normal leading-none text-text-black">
+                    {formatValue(customer.preferredLanguage)}
+                  </div>
+                </div>
+              ))}
           </div>
 
           <div className="mt-6 flex flex-col gap-4 px-2 sm:flex-row sm:items-center sm:justify-between">
