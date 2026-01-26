@@ -262,69 +262,93 @@ export default function Search() {
         )}
         <div className="w-full rounded-[10px] border border-border-primary overflow-x-auto bg-white p-3 lg:p-3">
           <div className="w-full overflow-x-auto px-2">
-            <div className="flex gap-6 py-3 border-b border-border-secondary">
-              <div className="w-[120px] flex-shrink-0 text-sm font-semibold leading-none text-text-black">
-                ID
-              </div>
-              <div className="w-[160px] flex-shrink-0 px-2 text-sm font-semibold leading-none text-text-black">
-                Фамилия
-              </div>
-              <div className="w-[160px] flex-shrink-0 px-2 text-sm font-semibold leading-none text-text-black">
-                Имя
-              </div>
-              <div className="w-[140px] flex-shrink-0 px-2 text-sm font-semibold leading-none text-text-black">
-                ИНН
-              </div>
-            </div>
+            <table className="min-w-full border-collapse text-left">
+              <colgroup>
+                <col className="w-[120px]" />
+                <col className="w-[160px]" />
+                <col className="w-[160px]" />
+                <col className="w-[180px]" />
+                <col className="w-[140px]" />
+                <col className="w-[200px]" />
+                <col className="w-[150px]" />
+              </colgroup>
+              <thead>
+                <tr className="border-b border-border-secondary">
+                  <th className="py-3 text-sm font-semibold leading-none text-text-black">ID</th>
+                  <th className="px-2 py-3 text-sm font-semibold leading-none text-text-black">
+                    Фамилия
+                  </th>
+                  <th className="px-2 py-3 text-sm font-semibold leading-none text-text-black">
+                    Имя
+                  </th>
+                  <th className="px-2 py-3 text-sm font-semibold leading-none text-text-black">
+                    Отчество
+                  </th>
+                  <th className="px-2 py-3 text-sm font-semibold leading-none text-text-black">
+                    ИНН
+                  </th>
+                  <th className="px-2 py-3 text-sm font-semibold leading-none text-text-black">
+                    Email
+                  </th>
+                  <th className="px-2 py-3 text-sm font-semibold leading-none text-text-black">
+                    Телефон
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading && (
+                  <tr>
+                    <td colSpan={8} className="py-10 text-center text-sm text-text-gray">
+                      Загрузка...
+                    </td>
+                  </tr>
+                )}
 
-            {loading && (
-              <div className="flex items-center justify-center py-10 text-sm text-text-gray">
-                Загрузка...
-              </div>
-            )}
+                {!loading && error && (
+                  <tr>
+                    <td colSpan={8} className="py-10 text-center text-sm text-red-600">
+                      {error}
+                    </td>
+                  </tr>
+                )}
 
-            {!loading && error && (
-              <div className="flex items-center justify-center py-10 text-sm text-red-600">
-                {error}
-              </div>
-            )}
+                {!loading && !error && customers.length === 0 && (
+                  <tr>
+                    <td colSpan={8} className="py-10 text-center text-sm text-text-gray">
+                      Нет данных для отображения
+                    </td>
+                  </tr>
+                )}
 
-            {!loading && !error && customers.length === 0 && (
-              <div className="flex items-center justify-center py-10 text-sm text-text-gray">
-                Нет данных для отображения
-              </div>
-            )}
-
-            {!loading &&
-              !error &&
-              customers.map((customer) => (
-                <div key={customer.customerId} className="flex items-center gap-6 py-3">
-                  <div className="w-[120px] flex-shrink-0 text-sm font-normal leading-none text-text-black">
-                    {formatValue(customer.customerId)}
-                  </div>
-                  <div className="w-[160px] flex-shrink-0 px-2 text-sm font-normal leading-none text-text-black">
-                    {formatValue(customer.surname)}
-                  </div>
-                  <div className="w-[160px] flex-shrink-0 px-2 text-sm font-normal leading-none text-text-black">
-                    {formatValue(customer.name)}
-                  </div>
-                  <div className="w-[180px] flex-shrink-0 px-2 text-sm font-normal leading-none text-text-black">
-                    {formatValue(customer.patronymic)}
-                  </div>
-                  <div className="w-[140px] flex-shrink-0 px-2 text-sm font-normal leading-none text-text-black">
-                    {formatValue(customer.inn)}
-                  </div>
-                  <div className="w-[200px] flex-shrink-0 px-2 text-sm font-normal leading-none text-text-black">
-                    {formatValue(customer.email)}
-                  </div>
-                  <div className="w-[150px] flex-shrink-0 px-2 text-sm font-normal leading-none text-text-black">
-                    {formatValue(customer.phoneNumber)}
-                  </div>
-                  <div className="flex flex-1 px-4 text-sm font-normal leading-none text-text-black">
-                    {formatValue(customer.preferredLanguage)}
-                  </div>
-                </div>
-              ))}
+                {!loading &&
+                  !error &&
+                  customers.map((customer) => (
+                    <tr key={customer.customerId} className="border-b border-transparent">
+                      <td className="py-3 text-sm font-normal leading-none text-text-black">
+                        {formatValue(customer.customerId)}
+                      </td>
+                      <td className="px-2 py-3 text-sm font-normal leading-none text-text-black">
+                        {formatValue(customer.surname)}
+                      </td>
+                      <td className="px-2 py-3 text-sm font-normal leading-none text-text-black">
+                        {formatValue(customer.name)}
+                      </td>
+                      <td className="px-2 py-3 text-sm font-normal leading-none text-text-black">
+                        {formatValue(customer.patronymic)}
+                      </td>
+                      <td className="px-2 py-3 text-sm font-normal leading-none text-text-black">
+                        {formatValue(customer.inn)}
+                      </td>
+                      <td className="px-2 py-3 text-sm font-normal leading-none text-text-black">
+                        {formatValue(customer.email)}
+                      </td>
+                      <td className="px-2 py-3 text-sm font-normal leading-none text-text-black">
+                        {formatValue(customer.phoneNumber)}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
           </div>
 
           <div className="mt-6 flex flex-col gap-4 px-2 sm:flex-row sm:items-center sm:justify-between">
