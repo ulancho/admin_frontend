@@ -31,6 +31,13 @@ export interface FetchCustomersParams {
   sortBy?: string;
   direction?: SortDirection;
   signal?: AbortSignal;
+  customerId?: number | string;
+  inn?: string;
+  email?: string;
+  phoneNumber?: string;
+  surname?: string;
+  name?: string;
+  patronymic?: string;
 }
 
 export async function fetchCustomers({
@@ -38,14 +45,29 @@ export async function fetchCustomers({
   size = 10,
   sortBy = '',
   direction = 'desc',
+  customerId,
+  inn,
+  email,
+  phoneNumber,
+  surname,
+  name,
+  patronymic,
   signal,
 }: FetchCustomersParams = {}): Promise<CustomersResponse> {
   const { data } = await httpClient.get<CustomersResponse>('/customer/search', {
+    baseURL: 'https://mobile.fkb.kg/mobile/admin/api/v1',
     params: {
       page,
       size,
       sortBy,
       direction,
+      customerId,
+      inn,
+      email,
+      phoneNumber,
+      surname,
+      name,
+      patronymic,
     },
     headers: {
       accept: '*/*',

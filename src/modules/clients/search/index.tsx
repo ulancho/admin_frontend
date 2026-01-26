@@ -1,5 +1,5 @@
 import { ListFilterPlus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { type ChangeEvent, useEffect, useState } from 'react';
 
 import {
   fetchCustomers,
@@ -19,6 +19,16 @@ export default function Search() {
   const [error, setError] = useState<string | null>(null);
 
   const [filtersVisible, setFiltersVisible] = useState(false);
+  const [filters, setFilters] = useState({
+    customerId: '',
+    inn: '',
+    email: '',
+    phoneNumber: '',
+    surname: '',
+    name: '',
+    patronymic: '',
+  });
+  const [appliedFilters, setAppliedFilters] = useState(filters);
 
   const sortBy: FetchCustomersParams['sortBy'] = 'id';
   const direction: SortDirection = 'desc';
@@ -32,11 +42,31 @@ export default function Search() {
       setError(null);
 
       try {
+        const trimmedFilters = Object.fromEntries(
+          Object.entries(appliedFilters)
+            .map(([key, value]) => [key, value.trim()])
+            .filter(([, value]) => value !== ''),
+        );
+        const customerIdValue =
+          'customerId' in trimmedFilters &&
+          Number.isNaN(Number.parseInt(trimmedFilters.customerId, 10))
+            ? trimmedFilters.customerId
+            : trimmedFilters.customerId
+              ? Number.parseInt(trimmedFilters.customerId, 10)
+              : undefined;
+
         const response = await fetchCustomers({
           page,
           size: pageSize,
           sortBy,
           direction,
+          ...(trimmedFilters.customerId !== undefined ? { customerId: customerIdValue } : {}),
+          inn: trimmedFilters.inn,
+          email: trimmedFilters.email,
+          phoneNumber: trimmedFilters.phoneNumber,
+          surname: trimmedFilters.surname,
+          name: trimmedFilters.name,
+          patronymic: trimmedFilters.patronymic,
           signal: controller.signal,
         });
 
@@ -70,7 +100,7 @@ export default function Search() {
       isActive = false;
       controller.abort();
     };
-  }, [page, pageSize, direction, sortBy]);
+  }, [page, pageSize, direction, sortBy, appliedFilters]);
 
   function toggleFiltersVisibility() {
     setFiltersVisible((current) => !current);
@@ -89,6 +119,37 @@ export default function Search() {
   const showingFrom = totalElements === 0 ? 0 : page * pageSize + 1;
   const showingTo = Math.min((page + 1) * pageSize, totalElements);
 
+  function handleFilterChange(field: keyof typeof filters) {
+    return (event: ChangeEvent<HTMLInputElement>) => {
+      const { value } = event.target;
+      setFilters((current) => ({
+        ...current,
+        [field]: value,
+      }));
+    };
+  }
+
+  function applyFilters() {
+    setAppliedFilters(filters);
+    setPage(0);
+  }
+
+  function resetFilters() {
+    const emptyFilters = {
+      customerId: '',
+      inn: '',
+      email: '',
+      phoneNumber: '',
+      surname: '',
+      name: '',
+      patronymic: '',
+    };
+
+    setFilters(emptyFilters);
+    setAppliedFilters(emptyFilters);
+    setPage(0);
+  }
+
   return (
     <div className="h-full max-w-[100%]">
       <div className="flex h-full flex-col items-start gap-8">
@@ -106,18 +167,84 @@ export default function Search() {
         {filtersVisible && (
           <div className="w-full rounded-[10px] border border-border-primary bg-white p-4">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:gap-6">
-              <div className="flex flex-wrap gap-4"></div>
+              <div className="flex flex-wrap gap-4">
+                <label className="flex w-full max-w-[200px] flex-col gap-1 text-sm text-text-gray">
+                  ID клиента
+                  <input
+                    type="text"
+                    className="rounded-md border border-border-secondary px-3 py-2 text-sm text-text-black"
+                    value={filters.customerId}
+                    onChange={handleFilterChange('customerId')}
+                  />
+                </label>
+                <label className="flex w-full max-w-[240px] flex-col gap-1 text-sm text-text-gray">
+                  ИНН
+                  <input
+                    type="text"
+                    className="rounded-md border border-border-secondary px-3 py-2 text-sm text-text-black"
+                    value={filters.inn}
+                    onChange={handleFilterChange('inn')}
+                  />
+                </label>
+                <label className="flex w-full max-w-[240px] flex-col gap-1 text-sm text-text-gray">
+                  Email
+                  <input
+                    type="email"
+                    className="rounded-md border border-border-secondary px-3 py-2 text-sm text-text-black"
+                    value={filters.email}
+                    onChange={handleFilterChange('email')}
+                  />
+                </label>
+                <label className="flex w-full max-w-[240px] flex-col gap-1 text-sm text-text-gray">
+                  Телефон
+                  <input
+                    type="tel"
+                    className="rounded-md border border-border-secondary px-3 py-2 text-sm text-text-black"
+                    value={filters.phoneNumber}
+                    onChange={handleFilterChange('phoneNumber')}
+                  />
+                </label>
+                <label className="flex w-full max-w-[240px] flex-col gap-1 text-sm text-text-gray">
+                  Фамилия
+                  <input
+                    type="text"
+                    className="rounded-md border border-border-secondary px-3 py-2 text-sm text-text-black"
+                    value={filters.surname}
+                    onChange={handleFilterChange('surname')}
+                  />
+                </label>
+                <label className="flex w-full max-w-[240px] flex-col gap-1 text-sm text-text-gray">
+                  Имя
+                  <input
+                    type="text"
+                    className="rounded-md border border-border-secondary px-3 py-2 text-sm text-text-black"
+                    value={filters.name}
+                    onChange={handleFilterChange('name')}
+                  />
+                </label>
+                <label className="flex w-full max-w-[240px] flex-col gap-1 text-sm text-text-gray">
+                  Отчество
+                  <input
+                    type="text"
+                    className="rounded-md border border-border-secondary px-3 py-2 text-sm text-text-black"
+                    value={filters.patronymic}
+                    onChange={handleFilterChange('patronymic')}
+                  />
+                </label>
+              </div>
             </div>
             <div className="flex gap-3 mt-3.5">
               <button
                 type="button"
                 className="rounded-md border border-border-secondary px-4 py-2 text-sm font-medium text-text-black transition-colors hover:bg-gray-100 cursor-pointer"
+                onClick={resetFilters}
               >
                 Сбросить
               </button>
               <button
                 type="button"
                 className="rounded-md border border-border-secondary px-4 py-2 text-sm font-medium text-text-black transition-colors hover:bg-gray-100 cursor-pointer"
+                onClick={applyFilters}
               >
                 Применить
               </button>
